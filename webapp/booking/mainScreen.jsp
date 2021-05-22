@@ -26,22 +26,28 @@
 		overflow: hidden;
 	}
 	
-	.table{
+	.title{
 		background:black;
-		width:100%;
-		height: 300px;
 		text-align:center;
 		color:white;
 		position: relative;
 		overflow: hidden;
 		margin: 5px;
 	}
+	
+	.reservationContainer{
+		background:olivegreen;
+		width:100%;
+		position: relative;
+	}
+	
 	.reservation {
 		float: left;
-		background: white;
+		background: black;
 		width: 250px;
 		height: 250px;
-		color: black;
+		color: white;
+		text-align:center;
 		margin: 5px;
 	}
 	.customerName {
@@ -99,19 +105,19 @@
 						stmt.close();
 				}
 				%>
-				
-				<% for(int i=1; i< tableNum; i++){//테이블 별로 예약 내역 출력 %>
-				<div class="tableNum"><%=i %>번 테이블
-					<div class="table">
+					
 					<%
 						try{
 						SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
 						Date now = new Date();
-						String sql2 = "SELECT * FROM Reservation WHERE table_id =? AND date =?"; //해당 테이블의 예약정보 불러 옴
+						String sql2 = "SELECT * FROM Reservation WHERE date =? order by time"; //시간 순으로 예약정보 불러 옴
 						stmt2 = conn.prepareStatement(sql2);
-						stmt2.setString(1,Integer.toString(i));// 첫번째 ?를 테이블 번호로 설정
-						stmt2.setString(2,transFormat.format(now));//두번째 ?를 현재 날짜로 설정, 즉 오늘의 예약만 불러온다.
+						stmt2.setString(1,transFormat.format(now));//첫번째 ?를 현재 날짜로 설정, 즉 오늘의 예약만 불러온다.
 						rs2 = stmt2.executeQuery();
+						%>
+						<div class="title">예약 목록</div>
+						<div class="reservationContainer">
+						<%
 						while(rs2.next()){
 							String sTime = rs2.getString("time");// 해당 예약의 예약 시간 불러옴
 							String cus_id = rs2.getString("customer_id");//해당 예약의 고객 정보 불러옴
@@ -133,7 +139,7 @@
 							%>
 								고객 이름: <b><%=rs3.getString("name")%></b><br>
 								전화번호: <b><%=rs3.getString("phoneNumber")%></b><br>
-								인원: <%=rs2.getString("covers") %><br>
+								
 							<% 
 								} 
 							} catch (SQLException ex){
@@ -146,22 +152,23 @@
 										stmt3.close();
 								}
 								%>
+							인원: <%=rs2.getString("covers") %><br>
+							테이블 번호: <%=rs2.getString("table_id") %><br>
 							이벤트: <%=rs2.getString("event")%><br>
 							<a href="./updateReservation.jsp?id=<%=rs2.getString("oid") %>" class="btn btn-secondory" role="button">
 							수정 &raquo;></a>
 							<a href="#" onclick="deleteConfirm('<%=rs2.getString("oid")%>')" class="btn btn-secondory" role="button">
 							삭제 &raquo;></a>
 							</div>
-						
+						</div>
+						<br>
 						<% }
 						}catch (SQLException ex){
 							out.println(ex);
 							out.println("reservation 테이블 호출이 실패했습니다.<br>");	
 						}
-					%> </div>
-					</div>
-				<%	}
-					%>
+					%> 
+				
 					
 					<% if(conn != null);
 					conn.close();

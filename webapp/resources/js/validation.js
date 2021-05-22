@@ -1,59 +1,42 @@
 function CheckAddProduct() {
 	
-	var productId = document.getElementById("productId");
-	var name = document.getElementById("name");
-	var unitPrice = document.getElementById("unitPrice");
-	var unitsInStock = document.getElementById("unitsInStock");
-	
-	//상품 아이디 체크
-	if(!check(/^P[0-9][4,11]$/, productId,
-		"[상품 코드]\nP와 숫자를 조합하여 5-12자까지 입력하세요\n첫 글자는 반드시 P로 시작하세요"))
-		return false;
-	
-	//상품명 체크
-	if(name.value.length < 4 || name.value.length > 12) {
-		alert("[상품명]\n최소 4자에서 최대 12자까지 입력하세요");
-		name.select();
-		name.focus();
-		return false;
-	}
-	
-	//상품 가격 체크
-	if (unitPrice.value.length == 0 || isNaN(unitPrice.value)) {
-		alert("[가격]\n숫자만 입력하세요");
-		unit.Price.select();
-		unitPrice.focus();
-		return false;
-	}
-	
-	if(unitPrice.value < 0) {
-		alert("[가격]\n음수는 입력할 수 없습니다");
-		unitPrice.select();
-		unitPrice.focus();
-		return false;
-	} else if(!check(/^\d+(?:[.]?[\d]?[\d]?$/, unitPrice,
-		"[가격]\n소수점 둘째 자리까지만 입력하세요"));
-		return false;
+		function checkUpdateReservation() {
 		
-	//재고 수 체크
-	if (isNaN(unitsInStock.value)) {
-		alert("[재고 수]\n숫자만 입력하세요");
-		unitsInStock.select();
-		unitsInStock.focus();
-		return false;
-	}
-	
-	function check(regExp, e, msg) {
-	
-		if(regExp.test(e.value)) {
-			return true;
+		var regExpName = /^[a-zA-Z가-힣]*$/;
+		var regExpNum = /^[0-9]*$/;
+		var regExpDate = /^\d{4}-\d{2}-\d{2}$/;
+		var regExpTime = /^\d{2}:\d{2}:\d{2}$/;
+		var form = document.updateReservation;
+		
+		var name = document.updateReservation.name.value;
+		var phoneNumber = document.updateReservation.phoneNumber.value;
+		var date = document.updateReservation.date.value;
+		var time = document.updateReservation.time.value;
+		var covers = document.updateReservation.covers.value;
+		
+		if(!regExpName.test(name)){
+			alert("이름은 알파벳, 한글만 입력해주세요!");
+			form.name.select();
+			return;
 		}
-		alert(msg);
-		e.select();
-		e.focus();
-		return false;
+		if(!regExpNum.test(phoneNumber)){
+			alert("전화번호는 숫자만 입력해주세요!")
+			return;
+		}
+		if(!regExpDate.test(date)){
+			alert("날짜는 YYYY-MM-DD 형식으로 입력해주세요!");
+			return;
+		}
+		if(!regExpTime.test(time)){
+			alert("시간은 HH-MM-SS 형식으로 입력해주세요!");
+			return;
+		}
+		if(!regExpNum.test(covers)){
+			alert("인원은 숫자만 입력해주세요!");
+			return;
+		}
+		
+		document.updateReseration.submit();
+		
 	}
-	
-	document.newProduct.submit()
-	
 }

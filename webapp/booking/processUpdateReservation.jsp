@@ -27,7 +27,6 @@
 	PreparedStatement pstmt = null;
 	ResultSet rs = null;
 	PreparedStatement pstmt2 = null;
-	ResultSet rs2 = null;
 	
 	String sql = "SELECT * FROM Reservation WHERE oid =?"; //먼저 주문번호(oid)에 해당하는 예약을 불러온다
 	pstmt = conn.prepareStatement(sql);
@@ -59,8 +58,6 @@
 		rs.close();
 	if(pstmt!=null)
 		pstmt.close();
-	if(rs2!=null)
-		rs2.close();
 	if(pstmt2!=null)
 		pstmt2.close();
 	if(conn!=null)
