@@ -34,8 +34,6 @@
 	pstmt.setInt(1, oid);
 	rs = pstmt.executeQuery();
 	
-	String sql2 = "SELECT * FROM Customer WHERE oid =?"; //예약에 저장되어 있는 customer_id를 얻어오기 위한 쿼리문
-	
 	if(rs.next()){
 		sql = "UPDATE Reservation SET covers=?, date=?, time=?, table_id=?, event=?  WHERE oid=?";
 		pstmt= conn.prepareStatement(sql);
@@ -49,17 +47,12 @@
 		
 		cus_id=Integer.valueOf(rs.getString("customer_id"));//예약에 저장되어 있는 customer_id를 cus_id에 불러온다.
 		
-		pstmt2 = conn.prepareStatement(sql2);
-		pstmt2.setInt(1,cus_id);
-		rs2 = pstmt.executeQuery();
-		
-		if(rs2.next()){
-			sql2 = "UPDATE Customer SET name=?, phoneNumber=? WHERE oid=?";
-			pstmt2.setString(1,name);
-			pstmt2.setString(2,phoneNumber);
-			pstmt2.setInt(3,cus_id);
-			pstmt2.executeUpdate(); // cus_id와 일치하는 고객의 정보에 대해 UPDATE 쿼리문 실행
-		}
+		String sql2 = "UPDATE Customer SET name=?, phoneNumber=? WHERE oid=?";
+		pstmt2=conn.prepareStatement(sql2);
+		pstmt2.setString(1,name);
+		pstmt2.setString(2,phoneNumber);
+		pstmt2.setInt(3,cus_id);
+		pstmt2.executeUpdate(); // cus_id와 일치하는 고객의 정보에 대해 UPDATE 쿼리문 실행
 	}
 	
 	if(rs!=null)
