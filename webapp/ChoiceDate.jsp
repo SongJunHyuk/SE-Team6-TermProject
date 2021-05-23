@@ -46,6 +46,7 @@ $(function() {
   });
 });
 </script>
+<title>날짜 조회</title>
 </head>
 <body>
 <%@ include file="./menu.jsp" %>

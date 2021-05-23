@@ -86,7 +86,7 @@
 	<%
 	int reservationNum = 0;
 	int tableNum = 0;
-	int operatingHour = 10;
+	int operatingHour = 20;
 	Statement stmt = null;
 	ResultSet rs = null;
 	PreparedStatement pstmt = null;
@@ -144,41 +144,47 @@
 	}
 	%>
 	<div class="containerTable">
-	<%for(int i = 1; i <= tableNum; i++){%>
+	<%for(int i = 1; i <= tableNum; i++){
+		int x=0;
+	%>
 	<div class="title">
 		<div class="tableNum"><%=i %>번 테이블</div>
-		<%for(int j = 0; j < operatingHour; j++){ %>
+		<%for(int j = 0; j < operatingHour; j++){
+			%>
 		<%if(flag[i-1][j]==true){%>
 			<div class="reservation">
 			<%if(j%2==0){%>
-				<%=j+11 %>:00<br>
+				<%=j+11-x %>:00<br>
 				예약가능<br>
-				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+11 %>:00:00" class="btn btn-secondory" role="button">
+				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+11-x %>:00:00" class="btn btn-secondory" role="button">
 							예약하기 &raquo;></a>
-			<%}
+			<%
+			x++;//j가 정각을 나타낼 때 2씩 증가하므로 그에 맞춰 x를 1씩 증가시킨다.
+			}
 			else{%>
-				<%=j+11 %>:30<br>
+				<%=j+11-x %>:30<br>
 				예약가능<br>
-				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+11 %>:30:00" class="btn btn-secondory" role="button">
+				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+11-x %>:30:00" class="btn btn-secondory" role="button">
 							예약하기 &raquo;></a>
 				
 			<% }%>
 			</div>
-		<%}
+		<%	
+		}
 		else{%>
 		<div class="cannotReservation">
 			<%if(j%2==0){%>
-				<%=j+11 %>:00<br>
+				<%=j+11-x %>:00<br>
 				예약 불가능<br>
 			<%
+			x++;//j가 정각을 나타낼 때 2씩 증가하므로 그에 맞춰 x를 1씩 증가시킨다.
 			}
 			else{%>
-				<%=j+11 %>:30<br>
+				<%=j+11-x %>:30<br>
 				예약 불가능<br>
 			<%}%>
 			</div>
 		<%}
-		
 		}%>
 		</div>
 	<%}
