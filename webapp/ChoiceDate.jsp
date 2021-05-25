@@ -27,7 +27,7 @@
 <script src="//code.jquery.com/jquery.min.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script>
-function checkDate(){
+function checkDate(){//유효성 검사
 	var regExpDate = /^\d{4}-\d{2}-\d{2}$/;
 	var form = document.choiceDate;
 	var date = form.date.value;

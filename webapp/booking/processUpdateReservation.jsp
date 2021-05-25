@@ -5,7 +5,7 @@
 <%@ page import="java.sql.Date" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.sql.*"%>
-<%@ include file="/connection.jsp" %>
+<%@ include file="./connection.jsp" %>
 <%
 
 	request.setCharacterEncoding("UTF-8");	
@@ -28,7 +28,7 @@
 	ResultSet rs = null;
 	PreparedStatement pstmt2 = null;
 	
-	String sql = "SELECT * FROM Reservation WHERE oid =?"; //먼저 주문번호(oid)에 해당하는 예약을 불러온다
+	String sql = "SELECT * FROM Reservation WHERE oid =?"; //먼저 예약번호(oid)에 해당하는 예약을 불러온다
 	pstmt = conn.prepareStatement(sql);
 	pstmt.setInt(1, oid);
 	rs = pstmt.executeQuery();

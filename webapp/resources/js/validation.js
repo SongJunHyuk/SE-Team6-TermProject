@@ -36,7 +36,7 @@ function CheckAddProduct() {
 			return;
 		}
 		
-		document.updateReseration.submit();
+		document.updateReservation.submit();
 		
 	}
 }

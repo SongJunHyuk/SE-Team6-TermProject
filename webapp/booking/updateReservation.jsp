@@ -1,22 +1,89 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page import="java.sql.*" %>
+<%@ include file="./connection.jsp" %>
+<%int coversForTable = 0;
+String table_id = request.getParameter("table_id");//테이블번호를 받아온다, 테이블마다 수용인원이 다르기 때문에 수용인원 초과하는 입력 방지 해야함
+if(table_id==null){
+	response.sendRedirect("./mainScreen.jsp");
+}
+String sql3 = "SELECT places from `Table` WHERE oid=?";
+PreparedStatement pstmt4 = null;
+ResultSet rs4 = null;
+pstmt4 = conn.prepareStatement(sql3);
+pstmt4.setString(1,table_id);
+rs4 = pstmt4.executeQuery();
+while(rs4.next()){
+	coversForTable = rs4.getInt("places");//테이블의 수용 인원 받아온다.
+}
+if(coversForTable == 0){
+	response.sendRedirect("./mainScreen.jsp");
+}
 
+%>
 <html>
 <head>
 	<link rel = "stylesheet"
 	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
-	
+	<script>
+function checkUpdateReservation(covers) {//유효성 검사, 잘못된 입력 방지
+		
+		var regExpName = /^[a-zA-Z가-힣]*$/;
+		var regExpNum = /^[0-9]*$/;
+		var regExpPhoneNum = /^\d{11}$/;
+		var regExpDate = /^\d{4}-\d{2}-\d{2}$/;
+		var regExpTime = /^\d{2}:\d{2}:\d{2}$/;
+		var form = document.updateThisReservation;
+		
+		var name = document.updateThisReservation.name.value;
+		var phoneNumber = document.updateThisReservation.phoneNumber.value;
+		var date = document.updateThisReservation.date.value;
+		var time = document.updateThisReservation.time.value;
+		var covers = document.updateThisReservation.covers.value;
+		
+		if(!regExpName.test(name)){
+			alert("이름은 알파벳, 한글만 입력해주세요!");
+			form.name.select();
+			return;
+		}
+		if(!regExpPhoneNum.test(phoneNumber)||!regExpNum.test(phoneNumber)){
+			alert("전화번호는 11자리 숫자만 입력해주세요!")
+			form.phoneNumber.select();
+			return;
+		}
+		if(!regExpDate.test(date)){
+			alert("날짜는 YYYY-MM-DD 형식으로 입력해주세요!");
+			form.date.select();
+			return;
+		}
+		if(!regExpTime.test(time)){
+			alert("시간은 HH:MM:SS 형식으로 입력해주세요!");
+			form.time.select();
+			return;
+		}
+		if(!regExpNum.test(covers)){
+			alert("인원은 숫자만 입력해주세요!");
+			form.covers.select();
+			return;
+		}
+		if(covers > Number(<%=coversForTable %>)){
+			alert("해당 테이블의 수용 인원을 초과합니다!");
+			form.covers.select();
+			return;
+		}
+
+		form.submit();
+	}
+	</script>
 
 <title>예약 수정</title>
 </head>
 <body>
-	<%@ include file="../menu.jsp" %>
+	<%@ include file="./menu.jsp" %>
 	<div class = "jumbotron">
 		<div class = "container">
 			<h1 class = "display-3">예약 수정</h1>
 		</div>
 	</div>
-	<%@ include file="/connection.jsp" %>
 	<%
 		String oid = request.getParameter("id");//mainScreen에서 전달받은 oid값이다
 		String cus_id=""; //고객의 정보를 불러오기 위한 고객의 id
@@ -51,13 +118,13 @@
 			pstmt2 = conn.prepareStatement(sql2);
 			pstmt2.setString(1,cus_id);
 			rs2 = pstmt2.executeQuery();
-			rs2.next();
+			rs2.next();//고객 정보를 가져온다.
 	%>
 	<div class="container">
 		<br>
 		<div class="row" align="center">
 			<div class="col-md-7">
-				<form name="updateReservation" action="./processUpdateReservation.jsp?oid=<%=oid %>"<%//mainScreen에서 전달 받은 oid를 processUpdateReservation 페이지에 전달 %>
+				<form name="updateThisReservation" action="./processUpdateReservation.jsp?oid=<%=oid %>"<%//mainScreen에서 전달 받은 oid를 processUpdateReservation 페이지에 전달 %>
 					class="form-horizontal" method="post">
 					
 					<div class="form-group row">
@@ -114,7 +181,7 @@
 					</div>
 					<div class="form-group row">
 						<div class="col-sm-offset-2 col-sm-10 ">
-							<input type="button" class="btn btn-primary" value="등록" onclick="checkUpdateReservation()">
+							<input type="button" class="btn btn-primary" value="등록" onclick="checkUpdateReservation(<%=coversForTable %>)">
 						</div>
 					</div>
 				</form>

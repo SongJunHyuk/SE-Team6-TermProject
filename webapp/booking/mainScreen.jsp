@@ -1,21 +1,19 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.Date" %>
+<%@ page import="java.sql.Date" %>
+<%@ page import="java.time.LocalDate" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.StringTokenizer" %>
 <html>
 <head>
 <link rel = "stylesheet"
-	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>	
+	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>	
 <style>
-	*{
-		margin:0;
-		padding:0;
-	}
+	
 	
 	body {
-		margin: 0 auto;
-		width: 90%;
+		
 	}
 	
 	.tableNum{
@@ -30,8 +28,6 @@
 		background:black;
 		text-align:center;
 		color:white;
-		position: relative;
-		overflow: hidden;
 		margin: 5px;
 	}
 	
@@ -44,8 +40,8 @@
 	.reservation {
 		float: left;
 		background: black;
-		width: 250px;
-		height: 250px;
+		width: 300px;
+		height: 300px;
 		color: white;
 		text-align:center;
 		margin: 5px;
@@ -53,20 +49,54 @@
 	.customerName {
 		color=orange;
 	}
+	.calendarContainer{
+	width: 300px;
+	position:relative;
+	left:50%;
+	transform: translateX(-50%);
+	}
+	.center{
+	position:relative;
+	left:50%;
+	transform: translateX(-50%);
+	}
+	
 </style>
 <title>Welcome</title>
 <script type="text/javascript">
-	function deleteConfirm(id) {
+	function deleteConfirm(oid) {
 		if(confirm("해당 예약을 삭제합니다!") == true)
-			location.href = "./deleteReservation.jsp?oid=" +id;
+			location.href = "./deleteReservation.jsp?oid=" +oid;
 		else
 			return;
 	}
 </script>
+<script src="//code.jquery.com/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script>
+function checkDate(){
+	var regExpDate = /^\d{4}-\d{2}-\d{2}$/;
+	var form = document.choiceDate;
+	var date = form.date.value;
+	if(!regExpDate.test(date)){
+		alert("날짜는 YYYY-MM-DD 형식으로 입력해주세요!");
+		return;
+	}
+	else{
+		form.submit();
+	}
+}
+
+$(function() {
+  $( "#datepicker1" ).datepicker({
+    dateFormat: 'yy-mm-dd'
+  });
+});
+</script>
 </head>
 <body>
 	
-	<%@ include file="../menu.jsp" %>
+	<%@ include file="./menu.jsp" %>
 	<%! String greeting = "6조 예약 관리 시스템"; 
 	String tagline = "Booking Management";%>
 	<div class = "jumbotron">
@@ -80,7 +110,7 @@
 				<%= tagline %>
 			</h3>
 		</div>
-			<%@ include file="/connection.jsp" %>
+			<%@ include file="./connection.jsp" %>
 			<%
 				int tableNum = 1;
 				ResultSet rs = null;
@@ -90,12 +120,14 @@
 				ResultSet rs3 = null;
 				PreparedStatement stmt3 = null;
 				try{
-					String sql = "select * from `Table`";
 					stmt = conn.createStatement();
-					rs = stmt.executeQuery(sql);
-					while(rs.next()){
-						tableNum++;
+					String sqlTable = "SELECT * FROM `Table` order by number desc limit 1";//테이블의 개수를 테이블의 가장 마지막 데이터를 추출하여 알아낸다
+					ResultSet rsTable = stmt.executeQuery(sqlTable);
+					while (rsTable.next()){
+						tableNum = Integer.valueOf(rsTable.getString("number")); //테이블 개수 설정
 					}
+					rsTable.close();
+					stmt.close();
 				}catch (SQLException ex) {
 					out.println("Table 테이블 호출이 실패했습니다.<br>");
 				} finally {
@@ -105,20 +137,35 @@
 						stmt.close();
 				}
 				%>
+				<div class="calendarContainer">
+					<form name="choiceDate" class="center" action="./mainScreen.jsp">
+						<input type="text" name="date" id="datepicker1">
+						<input type="button" class="btn btn-primary" value="선택 날짜 조회" onclick="checkDate()">
+					</form>
+				</div> 
 					
 					<%
 						try{
 						SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-						Date now = new Date();
+						LocalDate todaysDate = LocalDate.now();
+						Date now;
+						if(request.getParameter("date")==null){
+							now = Date.valueOf(todaysDate);	
+						}
+						else{
+						now = Date.valueOf(request.getParameter("date"));
+						}
+						boolean existenceReservation = false;
+						
 						String sql2 = "SELECT * FROM Reservation WHERE date =? order by time"; //시간 순으로 예약정보 불러 옴
 						stmt2 = conn.prepareStatement(sql2);
-						stmt2.setString(1,transFormat.format(now));//첫번째 ?를 현재 날짜로 설정, 즉 오늘의 예약만 불러온다.
+						stmt2.setString(1,transFormat.format(now));//첫번째 ?를 전달 받은 날짜로 설정.
 						rs2 = stmt2.executeQuery();
 						%>
-						<div class="title">예약 목록</div>
-						<div class="reservationContainer">
+						<div class="title">현재 조회중인 날짜:<%=now %></div>
 						<%
 						while(rs2.next()){
+							existenceReservation = true;
 							String sTime = rs2.getString("time");// 해당 예약의 예약 시간 불러옴
 							String cus_id = rs2.getString("customer_id");//해당 예약의 고객 정보 불러옴
 							StringTokenizer st = new StringTokenizer(sTime,":"); // 문자열로 저장 된 시간을 토큰 단위로 분리
@@ -155,13 +202,11 @@
 							인원: <%=rs2.getString("covers") %><br>
 							테이블 번호: <%=rs2.getString("table_id") %><br>
 							이벤트: <%=rs2.getString("event")%><br>
-							<a href="./updateReservation.jsp?id=<%=rs2.getString("oid") %>" class="btn btn-secondory" role="button">
+							<a href="./updateReservation.jsp?id=<%=rs2.getString("oid") %>&table_id=<%=rs2.getString("table_id")%>")="btn btn-secondory" role="button">
 							수정 &raquo;></a>
 							<a href="#" onclick="deleteConfirm('<%=rs2.getString("oid")%>')" class="btn btn-secondory" role="button">
 							삭제 &raquo;></a>
 							</div>
-						</div>
-						<br>
 						<% }
 						}catch (SQLException ex){
 							out.println(ex);
@@ -178,25 +223,5 @@
 						stmt2.close();
 					
 					%>
-			
-			
-			
-			
-			<%
-				Date day = new java.util.Date();
-				String am_pm;
-				int hour = day.getHours();
-				int minute = day.getMinutes();
-				int second = day.getSeconds();
-				if(hour / 12 == 0){
-					am_pm = "AM";
-				} else{
-					am_pm = "PM";
-					hour = hour - 12;
-				}
-				String CT = hour + ":" + minute + ":" + second + " " + am_pm;
-				out.println("현재 접속 시각: " + CT + "\n");
-			%>
-	<%@ include file="/footer.jsp" %>
 </body>
 </html>

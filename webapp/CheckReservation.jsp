@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="java.time.LocalDate" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Date" %>
 <%@ page import="java.util.StringTokenizer" %>
 <html>
 <head>
@@ -69,8 +69,15 @@
 </head>
 <body>
 <%@ include file="../menu.jsp" %>
-	<% String greeting = "테이블 별 예약 가능 시간"; 
-	String tagline = request.getParameter("date");%>
+	<% String greeting = "테이블 별 예약 가능 시간";
+	
+	String tagline;
+	if(request.getParameter("date")==null){
+		tagline = "오늘";
+	}
+	else{
+	tagline = request.getParameter("date");
+	}%>
 	<div class = "jumbotron">
 		<div class = "container">
 			<h1 class = "display-3"><%= greeting %>
@@ -87,6 +94,7 @@
 	int reservationNum = 0;
 	int tableNum = 0;
 	int operatingHour = 20;
+	int openTime = 11;
 	Statement stmt = null;
 	ResultSet rs = null;
 	PreparedStatement pstmt = null;
@@ -99,10 +107,17 @@
 		tableNum = Integer.valueOf(rs.getString("number"));
 	}
 	
-	java.sql.Date date = java.sql.Date.valueOf(request.getParameter("date"));
+	Date date;
+	LocalDate todaysDate = LocalDate.now();
 	
+	if(request.getParameter("date")==null){
+		date = Date.valueOf(todaysDate);
+	}
+	else{
+		date = java.sql.Date.valueOf(request.getParameter("date"));
+	}
 	
-	String sql2 = "select * from Reservation where date=? and table_id = ?";//해당 날짜, 테이블 번호의 예약내역
+	String sql2 = "select * from Reservation where date=? and table_id = ? order by time";//해당 날짜, 테이블 번호의 예약내역
 	
 	boolean flag[][] = new boolean[tableNum][operatingHour];//예약 가능 여부를 판단하는 flag
 	for(int i = 0; i < tableNum; i++){
@@ -110,37 +125,48 @@
 			flag[i][j] = true;//먼저 true로 설정해준다.
 		}
 	}
-	
+		
 	
 	for(int i = 1; i <= tableNum; i++){
+		pstmt = null;
 		pstmt = conn.prepareStatement(sql2);
 		pstmt.setDate(1,date);
 		pstmt.setInt(2,i);
 		rs2 = pstmt.executeQuery();
 		int j = 0;
-		if(rs2.next()){
-			
+		int x = 0;
+		while(rs2.next()){
 			String time = rs2.getString("time");
+			String[] timeSet = time.split(":");
 			StringTokenizer st = new StringTokenizer(time,":");
-			time = st.nextToken();//시간을 받아온다
-			int intTime = Integer.valueOf(time) - 11; //11시가 오픈타임으로 가정
+			time = st.nextToken();//hh:mm:ss에서 hh, 시간을 받아온다
+			String minute = st.nextToken();
+			int intTime = Integer.valueOf(timeSet[0]) - openTime; //11시가 오픈타임으로 가정
 			
-			if(st.nextToken()=="00"){//해당 시간 정각에 예약이 있다면
+			if(timeSet[1].equals("00")){//해당 시간 정각에 예약이 있다면
 				if (intTime==0){
 				flag[i-1][intTime] = false; //오픈 시간 예약이라면
+				flag[i-1][intTime+1] = false;//30분 후의 예약 비활성화
 				}
 				else{
-					flag[i-1][intTime] = false;
-					flag[i-1][intTime-1] = false;//30분 전의 예약 비활성화
-					flag[i-1][intTime+1] = false;//30분 후의 예약 비활성화
+					flag[i-1][2*intTime] = false;
+					flag[i-1][2*intTime-1] = false;//30분 전의 예약 비활성화
+					flag[i-1][2*intTime+1] = false;//30분 후의 예약 비활성화
 				}
 			}
-			else{//30분에 예약이 있다면
-				flag[i-1][intTime] = false;
-				flag[i-1][intTime-1] = false;//30분 전의 예약 비활성화
-				flag[i-1][intTime+1] = false;//30분 후의 예약 비활성화
+			else if(timeSet[1].equals("30")){//30분에 예약이 있다면
+				
+				//intTime은 똑같지만 30분 예약이므로 intTime(intTime:00:00)과 자기자신(intTime:30:00), 30분 후의 예약 비활성화	
+				flag[i-1][2*intTime] = false;//30분 전의 예약 비활성화
+				flag[i-1][2*intTime+1] = false;
+				flag[i-1][2*intTime+2] = false;//30분 후의 예약 비활성화
+			
 			}
+			x+=2;
 		}
+		
+		if(pstmt!=null)
+			pstmt.close();
 	}
 	%>
 	<div class="containerTable">
@@ -201,6 +227,8 @@
 		rs2.close();
 	if(pstmt != null)
 		stmt.close();
+	if(conn!=null)
+		conn.close();
 	%>
 
 </body>

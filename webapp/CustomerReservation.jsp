@@ -9,7 +9,7 @@
 	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
 <title>예약 등록</title>
 <script type="text/javascript">
-	function checkUpdateReservation() {
+	function checkAddReservation() {
 		
 		var regExpName = /^[a-zA-Z가-힣]*$/;
 		var regExpNum = /^[0-9]*$/;
@@ -72,7 +72,7 @@
 		<br>
 		<div class="row" align="center">
 			<div class="col-md-7">
-				<form name="updateReservation" action="./processAddReservation.jsp"
+				<form name="addReservation" action="./processAddReservation.jsp?date=<%=date %>&time=<%=time %>&tableNum=<%=tableNum %>"
 					class="form-horizontal" method="post">
 					
 					<div class="form-group row">
