@@ -100,6 +100,7 @@
 	<script>
 	alert('예약 등록이 완료 되었습니다!');
 	</script>
+	<title>예약 등록</title>
 	</head>
 	<body>
 	<%@ include file="./menu.jsp" %>

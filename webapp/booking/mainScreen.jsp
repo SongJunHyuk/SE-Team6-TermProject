@@ -70,6 +70,12 @@
 		else
 			return;
 	}
+	function checkArrived(oid) {
+		if(confirm("고객이 도착하였습니까?") == true)
+			location.href = "./customerArrived.jsp?oid=" +oid;
+		else
+			return;
+	}
 </script>
 <script src="//code.jquery.com/jquery.min.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
@@ -186,7 +192,7 @@ $(function() {
 							%>
 								고객 이름: <b><%=rs3.getString("name")%></b><br>
 								전화번호: <b><%=rs3.getString("phoneNumber")%></b><br>
-								
+								마일리지: <b><%=rs3.getString("mileage") %></b><br>
 							<% 
 								} 
 							} catch (SQLException ex){
@@ -202,10 +208,13 @@ $(function() {
 							인원: <%=rs2.getString("covers") %><br>
 							테이블 번호: <%=rs2.getString("table_id") %><br>
 							이벤트: <%=rs2.getString("event")%><br>
+							도착시간: <%=rs2.getString("arrivalTime") %><br>
 							<a href="./updateReservation.jsp?id=<%=rs2.getString("oid") %>&table_id=<%=rs2.getString("table_id")%>")="btn btn-secondory" role="button">
 							수정 &raquo;></a>
 							<a href="#" onclick="deleteConfirm('<%=rs2.getString("oid")%>')" class="btn btn-secondory" role="button">
 							삭제 &raquo;></a>
+							<a href="#" onclick="checkArrived('<%=rs2.getString("oid")%>')" class="btn btn-secondory" role="button">
+							도착 &raquo;></a>
 							</div>
 						<% }
 						}catch (SQLException ex){

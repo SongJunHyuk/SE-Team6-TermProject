@@ -42,6 +42,7 @@ function checkDate(){//유효성 검사
 
 $(function() {
   $( "#datepicker1" ).datepicker({
+	minDate: 0,
     dateFormat: 'yy-mm-dd'
   });
 });
