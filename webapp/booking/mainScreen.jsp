@@ -71,8 +71,10 @@
 			return;
 	}
 	function checkArrived(oid) {
-		if(confirm("고객이 도착하였습니까?") == true)
+		if(confirm("고객이 도착하였습니까?") == true){
+			alert('입장처리가 완료 되었습니다!');
 			location.href = "./customerArrived.jsp?oid=" +oid;
+		}
 		else
 			return;
 	}

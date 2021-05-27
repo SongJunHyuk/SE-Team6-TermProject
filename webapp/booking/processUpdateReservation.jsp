@@ -60,7 +60,7 @@
 		pstmt2.close();
 	if(conn!=null)
 		conn.close();
-	
+
 	response.sendRedirect("./mainScreen.jsp");
 	%>
 	

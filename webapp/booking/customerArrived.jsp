@@ -55,19 +55,6 @@
 	pstmt.setInt(2,cus_id);
 	pstmt.executeUpdate();
 	
+
+	response.sendRedirect("./mainScreen.jsp");
 %>
-<html>
-<head>
-</head>
-<body>
-	<script>
-		function updateComplete(){
-			alert('도착시간이 기록 되었습니다!');
-		}
-		updateComplete();
-	</script>
-	<%
-		response.sendRedirect("./mainScreen.jsp");
-	%>
-</body>
-</html>

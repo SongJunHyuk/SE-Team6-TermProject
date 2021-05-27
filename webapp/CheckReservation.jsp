@@ -93,15 +93,27 @@
 	<%
 	int reservationNum = 0;
 	int tableNum = 0;
-	int operatingHour = 20;
+	int operatingHour = 20;//30분 단위로 출력할 것이므로 시간 * 2 를 해준 값이다.
 	int openTime = 11;
+	int overTime = 21;
 	Statement stmt = null;
 	ResultSet rs = null;
 	PreparedStatement pstmt = null;
 	ResultSet rs2 = null;
 	
+	
+	String sql = "SELECT * FROM operatingHour";
+	stmt=conn.createStatement();
+	rs = stmt.executeQuery(sql);
+	while(rs.next()){
+		openTime = rs.getInt("open_time");
+		overTime = rs.getInt("over_Time");
+	}
+	
+	operatingHour = (overTime - openTime) * 2;
+	
 	stmt= conn.createStatement();
-	String sql = "select * from `Table` order by number desc limit 1";
+	sql = "select * from `Table` order by number desc limit 1";
 	rs = stmt.executeQuery(sql);
 	while(rs.next()){
 		tableNum = Integer.valueOf(rs.getString("number"));
@@ -180,17 +192,17 @@
 		<%if(flag[i-1][j]==true){%>
 			<div class="reservation">
 			<%if(j%2==0){%>
-				<%=j+11-x %>:00<br>
+				<%=j+openTime-x %>:00<br>
 				예약가능<br>
-				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+11-x %>:00:00" class="btn btn-secondory" role="button">
+				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+openTime-x %>:00:00" class="btn btn-secondory" role="button">
 							예약하기 &raquo;></a>
 			<%
 			x++;//j가 정각을 나타낼 때 2씩 증가하므로 그에 맞춰 x를 1씩 증가시킨다.
 			}
 			else{%>
-				<%=j+11-x %>:30<br>
+				<%=j+openTime-x %>:30<br>
 				예약가능<br>
-				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+11-x %>:30:00" class="btn btn-secondory" role="button">
+				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+openTime-x %>:30:00" class="btn btn-secondory" role="button">
 							예약하기 &raquo;></a>
 				
 			<% }%>
@@ -200,13 +212,13 @@
 		else{%>
 		<div class="cannotReservation">
 			<%if(j%2==0){%>
-				<%=j+11-x %>:00<br>
+				<%=j+openTime-x %>:00<br>
 				예약 불가능<br>
 			<%
 			x++;//j가 정각을 나타낼 때 2씩 증가하므로 그에 맞춰 x를 1씩 증가시킨다.
 			}
 			else{%>
-				<%=j+11-x %>:30<br>
+				<%=j+openTime-x %>:30<br>
 				예약 불가능<br>
 			<%}%>
 			</div>

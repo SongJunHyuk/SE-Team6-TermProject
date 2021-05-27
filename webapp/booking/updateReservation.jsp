@@ -1,7 +1,8 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page import="java.sql.*" %>
 <%@ include file="./connection.jsp" %>
-<%int coversForTable = 0;
+<%
+int coversForTable = 0;
 String table_id = request.getParameter("table_id");//테이블번호를 받아온다, 테이블마다 수용인원이 다르기 때문에 수용인원 초과하는 입력 방지 해야함
 if(table_id==null){
 	response.sendRedirect("./mainScreen.jsp");
@@ -70,7 +71,7 @@ function checkUpdateReservation(covers) {//유효성 검사, 잘못된 입력 �
 			form.covers.select();
 			return;
 		}
-
+		alert('예약 정보 수정이 완료 되었습니다!');
 		form.submit();
 	}
 	</script>
