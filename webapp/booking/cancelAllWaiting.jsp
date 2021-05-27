@@ -16,4 +16,5 @@
 	stmt = conn.createStatement();
 	stmt.executeUpdate(sql);
 	
+	response.sendRedirect("./WaitingList.jsp");
 %>

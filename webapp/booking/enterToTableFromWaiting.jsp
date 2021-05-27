@@ -6,6 +6,7 @@
 <%
 	String name = request.getParameter("name");
 	String phoneNumber = request.getParameter("phoneNumber");
+	int waitingNum = Integer.valueOf(request.getParameter("waitingNum"));
 	int cus_id=0;
 	int mileage = 0;
 	
@@ -21,6 +22,11 @@
 	while(rs.next()){//고객 정보가 존재하지 않으면 실행되지 않음
 		cus_id = rs.getInt("oid");
 	}
+	
+	sql = "DELETE from waitingList WHERE waiting_number=?";
+	pstmt = conn.prepareStatement(sql);
+	pstmt.setInt(1, waitingNum);
+	pstmt.executeUpdate();
 	
 	if(cus_id==0){
 		sql = "SELECT oid from Customer order by oid desc limit 1";
