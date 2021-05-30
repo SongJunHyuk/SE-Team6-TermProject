@@ -23,7 +23,7 @@ href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
 			return;
 		}
 		if(!regExpNum.test(phoneNumber)){ // 공백값도 막자
-			alert("전화번호는 숫자만 입력해주세요!")
+			alert("전화번호는 숫자만 입력해주세요!");
 			return;
 		}
 		alert('대기자 등록이 완료되었습니다!');

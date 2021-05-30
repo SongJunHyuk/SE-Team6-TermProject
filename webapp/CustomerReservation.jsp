@@ -5,27 +5,72 @@
 
 <html>
 <head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0">
 <link rel = "stylesheet"
 	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+	<style>
+		@media screen and (min-width: 761px){
+			.container p{
+				font-size:calc(1.525rem + 3.3vw);
+				font-weight:300;
+				line-height:1.2
+			}
+			.text-center p{
+				font-size:calc(1.2rem + 2.2vw);
+				font-weight:150;
+				line-height:1.2;
+			}
+		}
+	
+		@media screen and (max-width: 760px){
+		body{
+			font-size:11px;
+		}
+		.container p{
+			font-size:calc(1.525rem + 3.3vw);
+			font-weight:150;
+			line-height:1.2;
+		}
+		.text-center p{
+			font-size:calc(1.2rem + 2.2vw);
+			font-weight:120;
+			line-height:1.2;
+		}
+		
+	
+	}
+	</style>
 <title>예약 등록</title>
 <script type="text/javascript">
 	function checkAddReservation() {
 		
-		var regExpName = /^[a-zA-Z가-힣]*$/;
+		var regExpName = /^[a-z|A-Z|가-힣]*$/;
 		var regExpNum = /^[0-9]*$/;
 		var form = document.addReservation;
 		
 		var name = form.name.value;
 		var phoneNumber = form.phoneNumber.value;
 		
+		if(name ==""){
+			alert("이름을 입력해주세요");
+			form.name.focus();
+			return;
+		}
+		
+		if(phoneNumber == ""){
+			alert("전화번호를 입력해주세요");
+			form.phoneNumber.focus();
+			return;
+		}
+		
 		if(!regExpName.test(name)){
 			alert("이름은 알파벳, 한글만 입력해주세요!");
-			form.name.select();
 			form.name.focus();
 			return;
 		}
 		else if(!regExpNum.test(phoneNumber)){
-			alert("전화번호는 숫자만 입력해주세요!")
+			alert("전화번호는 숫자만 입력해주세요!");
+			form.phoneNumber.focus();
 			return;
 		}
 		else{
@@ -34,21 +79,22 @@
 		
 	}
 </script>
+
 </head>
 <body>
 <%@ include file="./menu.jsp" %>
-	<% String greeting = "6조 예약 관리 시스템"; 
-	String tagline = "예약 등록";%>
+	<% String greeting = "예약 등록"; 
+	String tagline = "정보를 입력하세요";%>
 	<div class = "jumbotron">
 		<div class = "container">
-			<h1 class = "display-3"><%= greeting %>
-			</h1>
+			<p><%= greeting %>
+			</p>
 		</div>
 	</div>
 	<div class = "text-center">
-		<h3>
+		<p>
 			<%= tagline %>
-		</h3>
+		</p>
 	</div>
 	<%@ include file="./connection.jsp" %>
 	<%

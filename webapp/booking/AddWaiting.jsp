@@ -24,7 +24,7 @@
 			form.name.focus();
 			return;
 		}		else if(!regExpNum.test(phoneNumber)){ // 공백값도 막자
-			alert("전화번호는 숫자만 입력해주세요!")
+			alert("전화번호는 숫자만 입력해주세요!");
 			return;
 		}
 		else{

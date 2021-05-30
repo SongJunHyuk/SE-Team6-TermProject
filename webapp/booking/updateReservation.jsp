@@ -47,7 +47,7 @@ function checkUpdateReservation(covers) {//유효성 검사, 잘못된 입력 �
 			return;
 		}
 		if(!regExpPhoneNum.test(phoneNumber)||!regExpNum.test(phoneNumber)){
-			alert("전화번호는 11자리 숫자만 입력해주세요!")
+			alert("전화번호는 11자리 숫자만 입력해주세요!");
 			form.phoneNumber.select();
 			return;
 		}

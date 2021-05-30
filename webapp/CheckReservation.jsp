@@ -5,66 +5,178 @@
 <%@ page import="java.util.StringTokenizer" %>
 <html>
 <head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0">
 <link rel = "stylesheet"
 	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
 	<style>
-		*{
-		margin:0;
-		padding:0;
+	
+	@media screen and (min-width:761px){
+	.container p{
+		font-size:calc(1.525rem + 3.3vw);
+		font-weight:300;
+		line-height:1.2
+	}
+	.text-center p{
+			font-size:calc(1.2rem + 2.2vw);
+			font-weight:150;
+			line-height:1.2;
+		}
+		
+	.visibleInMobile *{
+		display:none;
 	}
 	
 	.tableNum{
 		background:black;
-		float:left;
 		color: white;
 		text-align:center;
-		height:100%;
+		width:100%;
 	}
 	.containerTable{
-		margin: 0 auto;
+		margin:0 auto;
 		width:90%;
-		height: 350px;
-		
+		overflow:hidden
 	}
 	
 	.title{
 		background:black;
 		text-align:center;
-		width:90%;
+		margin: 0 auto;
+		width:100%;
 		color:white;
 		position: relative;
 		overflow: hidden;
 		margin: 5px;
 	}
 	
-	.reservationContainer{
-		background:olivegreen;
-		width:100%;
-		position: relative;
-	}
-	
 	.reservation {
+		border-radius:10%;
 		float: left;
 		background: skyblue;
-		width: 150px;
-		height: 120px;
+		width: 125px;
+		height: 80px;
 		color: white;
 		text-align:center;
 		margin: 5px;
 	}
 	.cannotReservation {
+		border-radius:10%;
 		float: left;
 		background:orange;
-		width: 150px;
-		height: 120px;
+		width: 125px;
+		height: 80px;
 		color: white;
 		text-align:center;
 		margin: 5px;
 	}
-	.customerName {
-		color=orange;
-	}	
+	.visibleAlways a{
+	
+		text-decoration:none;
+		color:white;
+	}
+	.hiddenInMobile a{
+		text-decoration:none;
+		color:black;
+	}
+	}
+	@media screen and (max-width: 760px){
+		body{
+			font-size:11px;
+		}
+		.container p{
+			font-size:calc(1.525rem + 3.3vw);
+			font-weight:150;
+			line-height:1.2;
+		}
+		.text-center p{
+			font-size:calc(1.2rem + 2.2vw);
+			font-weight:120;
+			line-height:1.2;
+		}
+		.tableNum{
+		background:ivory;
+		color: black;
+		text-align:center;
+		width:100%;
+	}
+	.containerTable{
+		margin:0 auto;
+		width:100%;
+		
+	}
+	
+	.title{
+		background:black;
+		text-align:center;
+		margin: 0 auto;
+		width:100%;
+		color:white;
+		position: relative;
+		overflow: hidden;
+		margin: 5px;
+	}
+	
+	
+	.reservation {
+		border-radius:10%;
+		float:left;
+		border: 1px solid black;
+		background: white;
+		width: 18%;
+		height: 4%;
+		text-align:center;
+		margin: 2px;
+	}
+	.hiddenInMobile a{
+		display:none;
+	}
+	.cannotReservation {
+		border-radius:10%;
+		float:left;
+		border: 1px solid black;
+		width: 18%;
+		height: 4%;
+		background:gray;
+		text-align:center;
+		margin: 2px;
+	}
+	
+	
+	.visibleAlways a{
+		text-decoration:none;
+		color:black;
+	}
+	
+	.hiddenInMobile a{
+		display:none;
+	}
+	
+	.visibleAlways p{
+		color:black;
+	}
+	
+	.hiddenInMobile p{
+		display:none;
+	}
+	.visibleInMobile {
+		margin-left:5%;
+	}
+	
+	.visibleInMobile *{
+		display:inline-block;
+	}
+	
+	.cannotColor{
+		width:8px;
+		height:8px;
+		background:gray;
+		border: 1px solid black;
+	}
+	
+	
+	}
 	</style>
+	
 	<title>예약 조회</title>
 </head>
 <body>
@@ -80,15 +192,18 @@
 	}%>
 	<div class = "jumbotron">
 		<div class = "container">
-			<h1 class = "display-3"><%= greeting %>
-			</h1>
+			<p><%= greeting %></p>
+			
 		</div>
 	</div>
 	<div class = "text-center">
-			<h3>
+			<p>
 				<%= tagline %> 예약 목록
-			</h3>
-		</div>
+			</p>
+	</div>
+	<div class="visibleInMobile">
+		<div class="cannotColor"></div><div>예약불가</div>
+	</div>
 <%@ include file="./connection.jsp" %>
 	<%
 	int reservationNum = 0;
@@ -192,18 +307,18 @@
 		<%if(flag[i-1][j]==true){%>
 			<div class="reservation">
 			<%if(j%2==0){%>
-				<%=j+openTime-x %>:00<br>
-				예약가능<br>
+				<div class="visibleAlways"><a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+openTime-x %>:00:00"><%=j+openTime-x %>:00</a></div>
+				<div class="hiddenInMobile">
 				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+openTime-x %>:00:00" class="btn btn-secondory" role="button">
-							예약하기 &raquo;></a>
+							예약하기 &raquo;></a></div>
 			<%
 			x++;//j가 정각을 나타낼 때 2씩 증가하므로 그에 맞춰 x를 1씩 증가시킨다.
 			}
 			else{%>
-				<%=j+openTime-x %>:30<br>
-				예약가능<br>
+				<div class="visibleAlways"><a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+openTime-x %>:30:00"><%=j+openTime-x %>:30</a></div>
+				<div class="hiddenInMobile">
 				<a href="./CustomerReservation.jsp?date=<%=date %>&tableNum=<%=i %>&time=<%=j+openTime-x %>:30:00" class="btn btn-secondory" role="button">
-							예약하기 &raquo;></a>
+							예약하기 &raquo;></a></div>
 				
 			<% }%>
 			</div>
@@ -212,14 +327,14 @@
 		else{%>
 		<div class="cannotReservation">
 			<%if(j%2==0){%>
-				<%=j+openTime-x %>:00<br>
-				예약 불가능<br>
+				<div class="visibleAlways"><%=j+openTime-x %>:00</div>
+				<div class="hiddenInMobile"><p>예약 불가능<br></p></div>
 			<%
 			x++;//j가 정각을 나타낼 때 2씩 증가하므로 그에 맞춰 x를 1씩 증가시킨다.
 			}
 			else{%>
-				<%=j+openTime-x %>:30<br>
-				예약 불가능<br>
+				<div class="visibleAlways"><%=j+openTime-x %>:30<br></div>
+				<div class="hiddenInMobile"><p>예약 불가능<br></p></div>
 			<%}%>
 			</div>
 		<%}
