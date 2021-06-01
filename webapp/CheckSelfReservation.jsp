@@ -52,7 +52,7 @@ function checkValidation() {
 		</div>
 		<div class = "text-center">
 			<form name="checkSelfReservation" action="./processFindReservation.jsp">
-				<input type="text" id="phoneNumber" name="phoneNumber">
+				<label>전화번호</label><input type="text" id="phoneNumber" name="phoneNumber">
 				<input type="button" class="btn btn-primary" value="조회" onclick="checkValidation()">
 			</form>
 		</div>

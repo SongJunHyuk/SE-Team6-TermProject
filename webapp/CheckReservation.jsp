@@ -5,184 +5,6 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.StringTokenizer" %>
 <%@ page import="java.time.LocalTime" %>
-<html>
-<head>
-<meta name="viewport" content="width=device-width; initial-scale=1.0">
-<link rel = "stylesheet"
-	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
-	<style>
-	
-	@media screen and (min-width:761px){
-	.container p{
-		font-size:calc(1.525rem + 3.3vw);
-		font-weight:300;
-		line-height:1.2
-	}
-	.text-center p{
-			font-size:calc(1.2rem + 2.2vw);
-			font-weight:150;
-			line-height:1.2;
-		}
-		
-	.visibleInMobile *{
-		display:none;
-	}
-	
-	.tableNum{
-		background:black;
-		color: white;
-		text-align:center;
-		width:100%;
-	}
-	.containerTable{
-		margin:0 auto;
-		width:90%;
-		overflow:hidden
-	}
-	
-	.title{
-		background:black;
-		text-align:center;
-		margin: 0 auto;
-		width:100%;
-		color:white;
-		position: relative;
-		overflow: hidden;
-		margin: 5px;
-	}
-	
-	.reservation {
-		border-radius:10%;
-		float: left;
-		background: skyblue;
-		width: 125px;
-		height: 80px;
-		color: white;
-		text-align:center;
-		margin: 5px;
-	}
-	.cannotReservation {
-		border-radius:10%;
-		float: left;
-		background:orange;
-		width: 125px;
-		height: 80px;
-		color: white;
-		text-align:center;
-		margin: 5px;
-	}
-	.visibleAlways a{
-	
-		text-decoration:none;
-		color:white;
-	}
-	.hiddenInMobile a{
-		text-decoration:none;
-		color:black;
-	}
-	}
-	@media screen and (max-width: 760px){
-		body{
-			font-size:11px;
-		}
-		.container p{
-			font-size:calc(1.525rem + 3.3vw);
-			font-weight:150;
-			line-height:1.2;
-		}
-		.text-center p{
-			font-size:calc(1.2rem + 2.2vw);
-			font-weight:120;
-			line-height:1.2;
-		}
-		.tableNum{
-		background:ivory;
-		color: black;
-		text-align:center;
-		width:100%;
-	}
-	.containerTable{
-		margin:0 auto;
-		width:100%;
-		
-	}
-	
-	.title{
-		background:black;
-		text-align:center;
-		margin: 0 auto;
-		width:100%;
-		color:white;
-		position: relative;
-		overflow: hidden;
-		margin: 5px;
-	}
-	
-	
-	.reservation {
-		border-radius:10%;
-		float:left;
-		border: 1px solid black;
-		background: white;
-		width: 18%;
-		height: 4%;
-		text-align:center;
-		margin: 2px;
-	}
-	.hiddenInMobile a{
-		display:none;
-	}
-	.cannotReservation {
-		border-radius:10%;
-		float:left;
-		border: 1px solid black;
-		width: 18%;
-		height: 4%;
-		background:gray;
-		text-align:center;
-		margin: 2px;
-	}
-	
-	
-	.visibleAlways a{
-		text-decoration:none;
-		color:black;
-	}
-	
-	.hiddenInMobile a{
-		display:none;
-	}
-	
-	.visibleAlways p{
-		color:black;
-	}
-	
-	.hiddenInMobile p{
-		display:none;
-	}
-	.visibleInMobile {
-		margin-left:5%;
-	}
-	
-	.visibleInMobile *{
-		display:inline-block;
-	}
-	
-	.cannotColor{
-		width:8px;
-		height:8px;
-		background:gray;
-		border: 1px solid black;
-	}
-	
-	
-	}
-	</style>
-	
-	<title>예약 조회</title>
-</head>
-<body>
-<%@ include file="../menu.jsp" %>
 	<% String greeting = "테이블 별 예약 가능 시간";
 	
 	String tagline;
@@ -206,6 +28,12 @@
 	<div class="visibleInMobile">
 		<div class="cannotColor"></div><div>예약불가</div>
 	</div>
+	<div class="calendarContainer">
+	<form name="choiceDate" class="center" action="./Main.jsp">
+		<input type="text" name="date" id="datepicker1">
+		<input type="button" class="btn btn-primary" value="조회" onclick="checkDate()">
+	</form>
+	</div>
 <%@ include file="./connection.jsp" %>
 	<%
 	int reservationNum = 0;
@@ -213,10 +41,30 @@
 	int operatingHour = 20;//30분 단위로 출력할 것이므로 시간 * 2 를 해준 값이다.
 	int openTime = 11;
 	int overTime = 21;
+	String requestDate = request.getParameter("date");
 	
+	
+	
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+	
+	if(requestDate == null){
+		requestDate = dateFormat.format(java.sql.Date.valueOf(LocalDate.now()));//요청받은 날짜가 따로 없다면 오늘 날짜로 설정
+	}
+	
 	Date dateNow = new Date();
+	String[] nowDateSet = dateFormat.format(dateNow).split("-");
 	String[] nowTimeSet = timeFormat.format(dateNow).split(":");//현재 시간을 토큰 단위로 문리하여 문자열로 저장
+	String[] requestDateSet = requestDate.split("-");//요청 받은 날짜를 토큰 단위로 분리하여 저장
+	
+	int year = Integer.valueOf(nowDateSet[0]);
+	int month = Integer.valueOf(nowDateSet[1]);
+	int today = Integer.valueOf(nowDateSet[2]);
+	int nowTime = Integer.valueOf(nowTimeSet[0]); //현재 시간
+	
+	int requestYear = Integer.valueOf(requestDateSet[0]);
+	int requestMonth = Integer.valueOf(requestDateSet[1]);
+	int requestDay = Integer.valueOf(requestDateSet[2]);
 	
 	Statement stmt = null;
 	ResultSet rs = null;
@@ -259,6 +107,18 @@
 			flag[i][j] = true;//먼저 true로 설정해준다.
 		}
 	}
+	
+	if(Integer.valueOf(requestDateSet[0])<year || Integer.valueOf(requestDateSet[1])<month || Integer.valueOf(requestDateSet[2])<today){
+		for(int i = 0; i < tableNum; i++){
+			for(int j = 0; j < operatingHour ; j++){
+				flag[i][j] = false;//오늘 이전의 날짜는 모두 false로 만들어 준다.
+			}
+		}
+	}
+	
+	for(int i = 0; i < tableNum; i++){
+		
+	}
 		
 	
 	for(int i = 1; i <= tableNum; i++){
@@ -270,8 +130,12 @@
 		int j = 0;
 		int x = 0;
 		
-		for(int k = 0; k <= (Integer.valueOf(nowTimeSet[0]) - openTime); k++){//현재 시간 이전의 예약은 비 활성화 
-			if(k< Integer.valueOf(nowTimeSet[0])){
+		if(Integer.valueOf(nowTimeSet[0])>overTime)
+			nowTime = overTime;
+		
+		if(requestDay==today){//오늘의 예약들은
+		for(int k = 0; k < (nowTime - openTime); k++){//현재 시간 이전의 예약은 비 활성화 
+			if(k< nowTime){
 			flag[i-1][2*k] = false;
 			flag[i-1][2*k+1] = false;
 			}
@@ -282,6 +146,7 @@
 			if(Integer.valueOf(nowTimeSet[1])<=40)// 마찬가지
 				flag[i-1][2*k+2] = true;
 			}
+		}
 		}
 		while(rs2.next()){
 			String time = rs2.getString("time");
@@ -378,6 +243,3 @@
 	if(conn!=null)
 		conn.close();
 	%>
-
-</body>
-</html>
