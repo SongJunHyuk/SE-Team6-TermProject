@@ -4,7 +4,7 @@
 <%@ include file="./connection.jsp" %>
 <%
 	request.setCharacterEncoding("UTF-8");	
-
+	
 	
 	String name = request.getParameter("name");
 	String phoneNumber = request.getParameter("phoneNumber");
@@ -13,7 +13,7 @@
 	String sTime = request.getParameter("time");
 	int tableNum = Integer.valueOf(request.getParameter("tableNum"));
 	String event = request.getParameter("event");
-
+	
 	Date date = Date.valueOf(sDate); // 문자열로 받은 날짜를 Date 형식으로 바꿔준다
 	Time time = Time.valueOf(sTime); // 문자열로 받은 시간을 Time 형식으로 바꿔준다
 	

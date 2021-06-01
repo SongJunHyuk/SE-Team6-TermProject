@@ -6,6 +6,19 @@
 	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
 	
 <title>예약 확인</title>
+<style>
+		h1{ 
+			text-align:center; 
+		}
+		h1:after {
+			display:block;
+			content: '';
+			border-bottom: solid 3px #4C4C4C;  
+			transform: scaleX(0);  
+			transition: transform 250ms ease-in-out;
+		}
+		h1:hover:after { transform: scaleX(1); }
+</style>
 <script>
 function checkValidation() {
 		
@@ -27,17 +40,14 @@ function checkValidation() {
 </head>
 <body>
 	<%@ include file="./menu.jsp" %>
-	<%! String greeting = "예약 확인"; 
-	String tagline = "전화 번호를 입력하세요";%>
 	<div class = "jumbotron">
 		<div class = "container">
-			<h1 class = "display-3"><%= greeting %>
-			</h1>
+			<h1>예약 확인</h1>
 		</div>
 	</div>
 		<div class = "text-center">
 			<h5>
-				<%= tagline %>
+				전화 번호를 입력하세요
 			</h5>
 		</div>
 		<div class = "text-center">

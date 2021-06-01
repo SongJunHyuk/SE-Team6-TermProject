@@ -18,8 +18,27 @@
 %>
 <html>
 	<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<link rel = "stylesheet"
 	href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+	<style>
+		@media screen and (max-width: 760px){
+		body{
+			font-size:11px;
+		}
+		.container p{
+			font-size:calc(1.525rem + 3.3vw);
+			font-weight:150;
+			line-height:1.2;
+		}
+		.text-center p{
+			font-size:calc(1.2rem + 2.2vw);
+			font-weight:120;
+			line-height:1.2;
+	
+	}
+	</style>
+	
 	<script>
 	alert('예약 취소가 완료 되었습니다!');
 	</script>
@@ -30,14 +49,14 @@
 	String tagline = "돌아가기";%>
 	<div class = "jumbotron">
 		<div class = "container">
-			<h1 class = "display-3"><%= greeting %>
-			</h1>
+			<p><%= greeting %>
+			</p>
 		</div>
 	</div>
 	<div class = "text-center">
-		<h2>
+		<p>
 			<a href="./Main.jsp"><%= tagline %></a>
-		</h2>
+		</p>
 	</div>
 	</body>
 	</html>

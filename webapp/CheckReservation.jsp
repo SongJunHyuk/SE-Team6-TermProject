@@ -1,8 +1,10 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.time.LocalDate" %>
+<%@ page import="java.util.Date" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.StringTokenizer" %>
+<%@ page import="java.time.LocalTime" %>
 <html>
 <head>
 <meta name="viewport" content="width=device-width; initial-scale=1.0">
@@ -211,6 +213,11 @@
 	int operatingHour = 20;//30분 단위로 출력할 것이므로 시간 * 2 를 해준 값이다.
 	int openTime = 11;
 	int overTime = 21;
+	
+	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+	Date dateNow = new Date();
+	String[] nowTimeSet = timeFormat.format(dateNow).split(":");//현재 시간을 토큰 단위로 문리하여 문자열로 저장
+	
 	Statement stmt = null;
 	ResultSet rs = null;
 	PreparedStatement pstmt = null;
@@ -234,11 +241,11 @@
 		tableNum = Integer.valueOf(rs.getString("number"));
 	}
 	
-	Date date;
+	java.sql.Date date;
 	LocalDate todaysDate = LocalDate.now();
 	
 	if(request.getParameter("date")==null){
-		date = Date.valueOf(todaysDate);
+		date = java.sql.Date.valueOf(todaysDate);
 	}
 	else{
 		date = java.sql.Date.valueOf(request.getParameter("date"));
@@ -262,6 +269,20 @@
 		rs2 = pstmt.executeQuery();
 		int j = 0;
 		int x = 0;
+		
+		for(int k = 0; k <= (Integer.valueOf(nowTimeSet[0]) - openTime); k++){//현재 시간 이전의 예약은 비 활성화 
+			if(k< Integer.valueOf(nowTimeSet[0])){
+			flag[i-1][2*k] = false;
+			flag[i-1][2*k+1] = false;
+			}
+			else{
+				flag[i-1][2*k] = false;
+			if(Integer.valueOf(nowTimeSet[1])<=10)// 해당 예약시간 20분 전까지만 예약 가능
+				flag[i-1][2*k+1] = true;
+			if(Integer.valueOf(nowTimeSet[1])<=40)// 마찬가지
+				flag[i-1][2*k+2] = true;
+			}
+		}
 		while(rs2.next()){
 			String time = rs2.getString("time");
 			String[] timeSet = time.split(":");
